@@ -5,9 +5,9 @@
 #include <map>
 
 #ifdef PLATFORM_64BITS
-	#define OFFS_M_ATTRIBUTES 0x250
+	#define OFFS_M_ATTRIBUTES 0x1C4
 #else
-	#define OFFS_M_ATTRIBUTES 0x1BC
+	#define OFFS_M_ATTRIBUTES 0x1C4
 #endif
 
 CEconManager g_EconManager;
