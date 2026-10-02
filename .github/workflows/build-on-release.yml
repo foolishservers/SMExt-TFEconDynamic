@@ -1,16 +1,15 @@
-# Builds when a release is published.
+# Builds when a release is published or run manually.
 name: Build Workflow
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
 jobs:
   build:
-    name: Build for ${{ matrix.os_short }}-${{ matrix.target_arch }} (SM ${{ matrix.target_sm_version }})
+    name: Build for ${{ matrix.os_short }}-${{ matrix.target_arch }} (SM${{ matrix.target_sm_version }})
     runs-on: ${{ matrix.os }}
-    # skip build on '[ci skip]'
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
 
     strategy:
       fail-fast: false
@@ -161,7 +160,7 @@ jobs:
           path: src/build/package
 
   combine_packages:
-    name: Upload assets for ${{ matrix.os_short }} (SM ${{ matrix.target_sm_version }})
+    name: Upload assets for ${{ matrix.os_short }} (SM${{ matrix.target_sm_version }})
     needs: [build]
     runs-on: ${{ matrix.os }}
 
@@ -175,7 +174,7 @@ jobs:
           - "1.12"
           - "1.13"
         include:
-          - pacakge_suffix: ""
+          - package_suffix: "" 
 
           - target_sm_version: "1.13"
             package_suffix: "-api9"
@@ -214,8 +213,15 @@ jobs:
           tar -czf "../package.${{ matrix.package_ext }}" --owner=0 --group=0 addons
           popd
 
+      - name: Upload Package as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package${{ matrix.package_suffix }}-${{ matrix.os_short }}-${{ matrix.target_sm_version }}
+          path: src/build/package.${{ matrix.package_ext }}
+
       - name: Upload Release Asset
         id: upload-release-asset
+        if: github.event_name == 'release'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
