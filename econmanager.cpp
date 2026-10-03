@@ -7,7 +7,7 @@
 #ifdef PLATFORM_64BITS
 	#define OFFS_M_ATTRIBUTES 0x250
 #else
-	#define OFFS_M_ATTRIBUTES 0x250
+	#define OFFS_M_ATTRIBUTES 0x1BC
 #endif
 
 CEconManager g_EconManager;
